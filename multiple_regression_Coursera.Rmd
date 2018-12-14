@@ -143,6 +143,11 @@ variable         | description
 </ol>
 ```{r score-dist}
 # type your code for Question 3 here, and Knit
+summary(evals$score)
+p <- ggplot(data = evals, aes(x = score)) + geom_histogram(binwidth = 0.05, color = "darkblue", fill = "lightblue")
+m <- geom_vline(aes(xintercept = mean(score)), color = "dodgerblue2", linetype = "longdash", size = 1)
+md <- geom_vline(aes(xintercept = median(score)), color = "dodgerblue4", linetype = "dotdash", size = 1)
+p + m + md
 
 ```
 
@@ -153,6 +158,16 @@ or mosaic plot).
 </div>
 ```{r two-vars-eda}
 # type your code for the Exercise here, and Knit
+# How does age of professor impact average rating of their beauty?
+
+ggplot(data = evals, aes(x = age, y = bty_avg)) + geom_point(color = "dodgerblue4")
+
+# Interesting... a clear (if dispersed) association. So...
+# How does ethicity of professor impact average rating of the beauty?
+
+ggplot(data = evals, aes(x = ethnicity, y = bty_avg)) + geom_boxplot(fill = "dodgerblue2", color = "dodgerblue4")
+
+# Also interesting, in that it appears to have very little impact.
 
 ```
 
