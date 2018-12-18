@@ -124,6 +124,8 @@ variable         | description
 <li> Experiment </li>
 </ol>
 
+NOTE: Observational: using already generated data.
+
 2. The original research question posed in the paper is whether beauty leads directly to the differences in course evaluations.  Given the study design, should the question be rephrased? If so, how? 
 <ol>
 <li> No, the question is worded accurately. </li>
@@ -131,6 +133,8 @@ variable         | description
 <li> Yes, revise wording to "Does beauty score increase the professor's course evaluations?"  </li>
 <li> Yes, revise wording to "Does beauty score decrease the professor's course evaluations?" </li>
 </ol>
+
+NOTE: Because this is an observational study, we can talk about correlation but not causation. The question should be rephrased as: "Is there an association between beauty and course evaluations" to reflect this.
 
 ## Exploring the data
 
@@ -144,10 +148,17 @@ variable         | description
 ```{r score-dist}
 # type your code for Question 3 here, and Knit
 summary(evals$score)
-p <- ggplot(data = evals, aes(x = score)) + geom_histogram(binwidth = 0.05, color = "darkblue", fill = "lightblue")
+
+# This shows that the median is at 4.3, with the third quartile ceilings at 4.6 (i.e., 25% of students gave their professors a score of over 4.6) -- students at UT Austin like their professors!
+
+# The following histogram will also show that 11 students gave a professor a score below 3 (just eyeball counting). That leaves as the false answer that the "left skewness" (true) suggests students are "less likely" (false -- more likely) to rate their professors highly.
+
+p <- ggplot(data = evals, aes(x = score)) + geom_histogram(binwidth = 0.05, color = "dodgerblue4", fill = "dodgerblue2")
 m <- geom_vline(aes(xintercept = mean(score)), color = "dodgerblue2", linetype = "longdash", size = 1)
 md <- geom_vline(aes(xintercept = median(score)), color = "dodgerblue4", linetype = "dotdash", size = 1)
 p + m + md
+
+# You'll note that I'm using a fairly restrictive bandwith for the histogram, and that all the colors are in the blue range, and specifically within the Dodger blue range. 1957 represent!
 
 ```
 
@@ -157,17 +168,18 @@ relationship using an appropriate visualization (scatterplot, side-by-side boxpl
 or mosaic plot).
 </div>
 ```{r two-vars-eda}
-# type your code for the Exercise here, and Knit
+
 # How does age of professor impact average rating of their beauty?
 
 ggplot(data = evals, aes(x = age, y = bty_avg)) + geom_point(color = "dodgerblue4")
 
-# Interesting... a clear (if dispersed) association. So...
+# Interesting... a clear (if dispersed) negative linear association. So...
+
 # How does ethicity of professor impact average rating of the beauty?
 
 ggplot(data = evals, aes(x = ethnicity, y = bty_avg)) + geom_boxplot(fill = "dodgerblue2", color = "dodgerblue4")
 
-# Also interesting, in that it appears to have very little impact.
+# Also interesting, in that it appears to have very little impact (though there is a wider variance for "not-minority" professors).
 
 ```
 
@@ -179,7 +191,7 @@ to be the case:
 
 ```{r scatter-score-bty_avg}
 ggplot(data = evals, aes(x = bty_avg, y = score)) +
-  geom_point()
+  geom_point(color = "dodgerblue4")
 ```
 
 Before we draw conclusions about the trend, compare the number of observations 
@@ -194,6 +206,9 @@ about the initial scatterplot?
 ```{r jitter}
 # type your code for the Exercise here, and Knit
 
+ggplot(data = evals, aes(x = bty_avg, y = score)) + 
+  geom_jitter(color = "dodgerblue4")
+
 ```
 
 Let's see if the apparent trend in the plot is something more than 
@@ -202,9 +217,11 @@ score by average beauty rating and add the line to your plot using the following
 you do not remember how to do this, refer to the previous lab.
 
 ```{r scatter-score-bty_avg-line}
+
 ggplot(data = evals, aes(x = bty_avg, y = score)) +
-  geom_jitter() +
+  geom_jitter(color = "dodgerblue4") +
   geom_smooth(method = "lm")
+
 ```
 
 The blue line is the model. The shaded gray area around the line tells us about the 
@@ -212,7 +229,7 @@ variability we might expect in our predictions. To turn that off, use `se = FALS
 
 ```{r scatter-score-bty_avg-line-no-se}
 ggplot(data = evals, aes(x = bty_avg, y = score)) +
-  geom_jitter() +
+  geom_jitter(color = "dodgerblue4") +
   geom_smooth(method = "lm", se = FALSE)
 ```
 
@@ -221,15 +238,25 @@ ggplot(data = evals, aes(x = bty_avg, y = score)) +
 interpret the slope. 
 </div>
 ```{r summary-model}
-# type your code for the Exercise here, and Knit
+
+m_bty <- lm(data = evals, score ~ bty_avg)
+summary(m_bty)
 
 ```
+
+NOTE: The equation for the linear model of the association between evaluation `score` and rated `bty_avg` (beauty) is 
+
+$$\hat{score} = 3.88 + 0.067{bty\_avg}$$
+
+Meaning, that each one-point increase in the average beauty rating for a professor is associated with a positive (if small) 0.067 increase in evaluation score. Though small, the model suggests that the association is statistically significant, at close to a p-value of 0 (i.e., with 95% confidence, we can say that there are close to zero situations in which simple sampling variation would produce a variance of this magnitude).
 
 4. Average beauty score is a statistically significant predictor of evaluation score. 
 <ol> 
 <li> True </li>
 <li> False </li>
 </ol>
+
+A: TRUE
 
 5. Use residual plots to evaluate whether the conditions of least squares regression are reasonable.  Which of the following statements is an incorrect analysis of the residual plots and conditions? 
 <ol>
