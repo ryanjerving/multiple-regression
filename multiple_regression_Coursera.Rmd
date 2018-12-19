@@ -171,7 +171,8 @@ or mosaic plot).
 
 # How does age of professor impact average rating of their beauty?
 
-ggplot(data = evals, aes(x = age, y = bty_avg)) + geom_point(color = "dodgerblue4")
+ggplot(data = evals, aes(x = age, y = bty_avg)) + geom_point(color = "dodgerblue4") +
+  geom_smooth(method = lm)
 
 # Interesting... a clear (if dispersed) negative linear association. So...
 
@@ -265,8 +266,29 @@ A: TRUE
 <li> Nearly normal residuals: Residuals are right skewed, but the sample size is large, so this may not be an important violation of conditions. </li>
 <li> Independent observations: Classes sampled randomly, no order effect. </li>
 </ol>
+
+
 ```{r diag-score-bty_avg}
-# type your code for the Question 5 here, and Knit
+# There are several ways to test whether the conditions of least squares regression hold in this case.
+# A residuals plot can show whether scatter around the line of zero divergence from the predicted value is more or less random:
+
+plot(m_bty$residuals ~ evals$bty_avg)
+
+# A histogram can show whether there's a nearly normal distribution of residuals around zero (here we see some left skew, but the large sample size balances out what otherwise might be a warning sign)
+
+hist(m_bty$residuals)
+
+# A normal probability plot should likewise show the residuals hewing pretty closely and consistently to the predicted values along the range of predicted values (again, here we get greater divergence at the higher end, balanced by large sample size)
+
+qqnorm(m_bty$residuals)
+qqline(m_bty$residuals)
+
+# Likewise, variation in the residuals should remain constant along the range of the response variable, and we would want to see no fan shape in our residuals vs. fitted plot, and no triangle shape in a version of this framed in terms of the absolute value of the residuals.
+
+plot(m_bty$residuals ~ m_bty$fitted)
+plot(abs(m_bty$residuals) ~ m_bty$fitted)
+
+# In this case, the order of collection isn't an issue, since all observations were collected -- as far as we know -- independently.
 
 ```
 
