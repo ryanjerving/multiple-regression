@@ -302,7 +302,8 @@ beauty score.
 
 ```{r bty-rel}
 ggplot(data = evals, aes(x = bty_f1lower, y = bty_avg)) +
-  geom_jitter()
+  geom_jitter(color = "dodgerblue4")
+
 evals %>% 
   summarise(cor(bty_avg, bty_f1lower))
 ```
@@ -339,6 +340,15 @@ summary(m_bty_gen)
 ```{r diag-mlr-model}
 # type your code for the Exercise here, and Knit
 
+
+plot(m_bty_gen$residuals ~ evals$bty_avg)
+hist(m_bty_gen$residuals)
+qqnorm(m_bty_gen$residuals)
+qqline(m_bty_gen$residuals)
+plot(m_bty_gen$residuals ~ m_bty_gen$fitted)
+plot(abs(m_bty_gen$residuals) ~ m_bty_gen$fitted)
+
+
 ```
 
 <div id="exercise">
@@ -348,6 +358,8 @@ model changed the parameter estimate for `bty_avg`?
 </div>
 ```{r summary-mlr-model}
 # type your code for the Exercise here, and Knit
+
+
 
 ```
 
